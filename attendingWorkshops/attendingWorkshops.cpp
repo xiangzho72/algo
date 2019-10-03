@@ -22,6 +22,10 @@ struct Workshop {
     bool operator < ( const Workshop& other) const {
         return (start < other.start);
     }
+
+    bool operator == ( const Workshop& other) const {
+        return ( start == other.start);
+    }
 };
 
 typedef vector<Workshop>::iterator  It; 
@@ -51,46 +55,13 @@ AvailableWorkshops* initialize(int start[], int dur[], int n) {
     return avail;
 }
 
-// return the iterator which points to the item which is >= value
-// Need to consider that some element could be same
-It binarySearch(vector<Workshop>& workshops, int value) {
-    auto begin = workshops.begin();
-    auto end = workshops.begin() + workshops.size() - 1;
-
-    if ( value <= (*begin).start ) {
-        return begin;
-    } else if ( value > (*end).start ) {
-        return workshops.end();
-    }
-
-    while ( begin < end ) {
-
-        auto mid = begin + (end - begin )/2;
-        if ( value < (*mid).start ) {
-            end = mid;
-        }
-        else if ( value == (*mid).start){
-            begin = mid;
-            break;
-        }
-        else {
-            begin = mid +1;
-        }
-
-    }
-
-    while( begin != workshops.begin() && (*begin).start ==(*(begin-1)).start )
-    { begin--;
-    }
-    return begin;
-}
-
 int buildMax(vector<Workshop>&, It, map<int,int>&);
 
 int findNumOfWorkshops(vector<Workshop>& workshops, It it, map<int,int>&maxs) {
     auto end = (*it).end;
 
-    auto nextIt = binarySearch(workshops,end);
+    Workshop a{end,0,0};
+    auto nextIt = std::lower_bound(workshops.begin(),workshops.end(),a);
     if ( nextIt == workshops.end()){
         return 1;
     }else {
